@@ -1,11 +1,12 @@
-import React from "react";
-import logo from "./logo.svg";
+import React, {Component} from "react";
 import "./App.css";
 import Header from "./components/Header";
-import Posts from "./components/Posts";
+import Post from "./components/Post";
+import Posts from './components/Posts'
 import Form from "./components/Form";
+import ToTop from "./components/ToTop"
 
-class App extends React.Component {
+class App extends Component {
   constructor() {
     super();
     this.state = {
@@ -13,15 +14,26 @@ class App extends React.Component {
       title: "",
       img: "",
       content: "",
-      id: 1
+      id: 1,
+      search: '',
+      filteredPosts: [],
+      filter: false
     };
-    this.handleChange = this.handleChange.bind(this);
   }
 
-  handleChange = e => {
-    let { value } = e.target;
-    this.setState({ [e.target.name]: value });
-  };
+  handleChange = ({name, value}) => {
+    this.setState({ [name]: value });
+  }
+
+  handleSearch = () => {
+    let {posts, filteredPosts, search} = this.state
+    filteredPosts = posts.filter(post => post.content.includes(search))
+    this.setState({filteredPosts: filteredPosts, filter: true, search: ''})
+  }
+
+  handleClear = () => {
+    this.setState({filter: false, search: ''})
+  }
 
   submitPost = () => {
     const { title, img, content, id, posts } = this.state;
@@ -38,7 +50,9 @@ class App extends React.Component {
       id: id + 1,
       title: "",
       img: "",
-      content: ""
+      content: "",
+      search: "",
+      filter: false
     });
   };
 
@@ -47,28 +61,30 @@ class App extends React.Component {
    this.setState({posts: filteredArr})
   };
 
+  editPost = id => {
+    alert("Edit post coming soon")
+  }
+
   render() {
+    const {title, img, content, posts, filter, filteredPosts, search} = this.state
     return (
       <div className="App">
-        <Header />
+        <Header 
+          handleChange={this.handleChange}
+          search={search}
+          handleSearch={this.handleSearch}
+          handleClear={this.handleClear} />
+        <div className="body">
         <Form
           handleChange={this.handleChange}
-          title={this.state.title}
-          img={this.state.img}
-          content={this.state.content}
+          title={title}
+          img={img}
+          content={content}
           submitPost={this.submitPost}
         />
-        {
-        this.state.posts.map(el => (
-          <Posts
-            id={el.id}
-            title={el.title}
-            img={el.img}
-            content={el.content}
-            deletePost={this.deletePost}
-          />
-        ))
-        }
+        <Posts posts={posts} filter={filter} filteredPosts={filteredPosts} deletePost={this.deletePost} editPost={this.editPost} />
+        </div>
+        <ToTop />
       </div>
     );
   }
