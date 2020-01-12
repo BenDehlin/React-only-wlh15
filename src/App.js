@@ -1,7 +1,6 @@
 import React, {Component} from "react";
 import "./App.css";
 import Header from "./components/Header";
-import Post from "./components/Post";
 import Posts from './components/Posts'
 import Form from "./components/Form";
 import ToTop from "./components/ToTop"
